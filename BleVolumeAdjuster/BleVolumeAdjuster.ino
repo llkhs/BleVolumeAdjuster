@@ -1,25 +1,15 @@
 #include <BleKeyboard.h>
 BleKeyboard bleKeyboard;
 
-unsigned int a=0;
-
-void setup()
-{
-    Serial.begin(115200);
-    pinMode(2,OUTPUT);
-    pinMode(22,INPUT_PULLUP);
-    pinMode(23,INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(22),up_volume,FALLING);
-    attachInterrupt(digitalPinToInterrupt(23),down_volume,FALLING);
-    bleKeyboard.setName("XinX's Volume Controller");
-    bleKeyboard.begin(); 
-}
+#define LED 2
+#define KEY_UP 22
+#define KEY_DOWN 23
 
 void up_volume(){
     if(bleKeyboard.isConnected()) {
         Serial.println("up key...");
         bleKeyboard.write(KEY_MEDIA_VOLUME_UP);
-        digitalWrite(2,1);
+        digitalWrite(LED,HIGH);
     }
 }
 
@@ -27,10 +17,22 @@ void down_volume(){
     if(bleKeyboard.isConnected()) {
         Serial.println("down key...");
         bleKeyboard.write(KEY_MEDIA_VOLUME_DOWN);
-        digitalWrite(2,1);
+        digitalWrite(LED,HIGH);
     }
 }
 
+void setup()
+{
+    Serial.begin(115200);
+    pinMode(LED,OUTPUT);
+    pinMode(KEY_UP,INPUT_PULLUP);
+    pinMode(KEY_DOWN,INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(KEY_UP),up_volume,RISING);
+    attachInterrupt(digitalPinToInterrupt(KEY_DOWN),down_volume,RISING);
+    bleKeyboard.setName("llkhs's Volume Controller");
+    bleKeyboard.begin(); 
+}
+
 void loop(){
-    digitalWrite(2,0);
+    digitalWrite(LED,LOW);
 }
